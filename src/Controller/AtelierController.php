@@ -70,6 +70,11 @@ final class AtelierController extends AbstractController
     #[Route('/{id}/edit', name: 'app_atelier_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Atelier $atelier, EntityManagerInterface $entityManager): Response
     {
+        if ($this->getUser() !== $atelier->getInstructeur()) {
+            $this->addFlash('error', 'Vous n\'avez pas le droit de modifier cet atelier.');
+            return $this->redirectToRoute('app_atelier_index');
+        }
+
         $form = $this->createForm(AtelierType::class, $atelier);
         $form->handleRequest($request);
 
@@ -88,6 +93,10 @@ final class AtelierController extends AbstractController
     #[Route('/{id}', name: 'app_atelier_delete', methods: ['POST'])]
     public function delete(Request $request, Atelier $atelier, EntityManagerInterface $entityManager): Response
     {
+        if ($this->getUser() !== $atelier->getInstructeur()) {
+            $this->addFlash('error', 'Vous n\'avez pas le droit de supprimer cet atelier.');
+            return $this->redirectToRoute('app_atelier_index');
+        }
         if ($this->isCsrfTokenValid('delete'.$atelier->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($atelier);
             $entityManager->flush();

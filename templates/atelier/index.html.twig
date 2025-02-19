@@ -8,6 +8,12 @@
     <div class="container mt-5 ">
         <h1 class="mb-4">Atelier Index</h1>
 
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
         <!-- Table -->
         <div class="table-responsive">
             <table class="table table-bordered table-striped">
@@ -42,4 +48,5 @@
         </div>
 
     </div>
+
 {% endblock %}
