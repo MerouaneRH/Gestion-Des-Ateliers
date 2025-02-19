@@ -77,3 +77,7 @@ Un utilisateur avec les coordonnes suivantes a ete cree:
 Seul l'auteur d'atelier peut maintenant modifier et suprimer son atelier
 
 - symfony server:start --no-tls --listen-ip=0.0.0.0 --d
+
+# Question 11 :
+
+- symfony server:start --no-tls --listen-ip=0.0.0.0 --d

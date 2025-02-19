@@ -1,23 +1,32 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Create New Atelier{% endblock %}
+{% block title %}Créer un Atelier{% endblock %}
 
 {% block body %}
-    {{ include('atelier/_navbar.html.twig') }}
+    <div class="container mt-4">
+        <!-- Titre de la page avec icône -->
+        <h1 class="mb-4 text-center">
+            <i class="bi bi-plus-circle me-2"></i>Créer un nouvel Atelier
+        </h1>
 
-    <div class="container mt-5">
-        <h1 class="mb-4">Create New Atelier</h1>
-
-        <!-- Formulaire de création -->
-        <div class="card">
+        <!-- Carte pour le formulaire de création -->
+        <div class="card shadow-sm">
             <div class="card-body">
-                {{ include('atelier/_form.html.twig') }}
+                <!-- Icône pour le formulaire -->
+                <h2 class="card-title mb-4">
+                    <i class="bi bi-tools me-2"></i>Formulaire de création
+                </h2>
+
+                <!-- Formulaire -->
+                {{ include('atelier/_form.html.twig', {'button_label': 'Créer'}) }}
             </div>
         </div>
 
-        <!-- Lien vers la liste -->
-        <div class="mt-4">
-            <a href="{{ path('app_atelier_index') }}" class="btn btn-secondary">Back to list</a>
+        <!-- Bouton Retour avec icône -->
+        <div class="mt-4 text-center">
+            <a href="{{ path('app_atelier_index') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+            </a>
         </div>
     </div>
 {% endblock %}

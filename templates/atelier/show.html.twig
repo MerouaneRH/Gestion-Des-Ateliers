@@ -1,52 +1,41 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Atelier{% endblock %}
+{% block title %}Atelier - {{ atelier.nom }}{% endblock %}
 
 {% block body %}
-    {{ include('atelier/_navbar.html.twig') }}
+    <div class="container mt-4">
+        <h1 class="mb-4 text-center">{{ atelier.nom }}</h1>
 
-    <div class="container mt-5">
-        <h1 class="mb-4">Atelier Details</h1>
-
-        <!-- Table displaying atelier details -->
-        <div class="card">
+        <!-- Carte pour afficher les détails de l'atelier -->
+        <div class="card shadow-sm">
             <div class="card-body">
-                <table class="table">
-                    <tbody>
-                    <tr>
-                        <th>ID</th>
-                        <td>{{ atelier.id }}</td>
-                    </tr>
-                    <tr>
-                        <th>Nom</th>
-                        <td>{{ atelier.nom }}</td>
-                    </tr>
-                    <tr>
-                        <th>Description</th>
-                        <td>{{ atelier.description | raw }}</td>
-                    </tr>
-                    <tr>
-                        <th>ID Instructeur</th>
-                        <td>{{ atelier.instructeur.id }}</td>
-                    </tr>
-                    <tr>
-                        <th>Email Instructeur</th>
-                        <td>{{ atelier.instructeur.email }}</td>
-                    </tr>
-                    </tbody>
-                </table>
+                <h5 class="card-title mb-3">Détails de l'atelier</h5>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-hash me-2"></i>ID:</strong> {{ atelier.id }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-card-text me-2"></i>Description:</strong> {{ atelier.description | raw }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong><i class="bi bi-person me-2"></i>Instructeur:</strong>
+                        {{ atelier.instructeur.nom }} ({{ atelier.instructeur.email }})
+                    </li>
+                </ul>
             </div>
         </div>
 
-        <!-- Links to navigate -->
-        <div class="mt-4">
-            <a href="{{ path('app_atelier_index') }}" class="btn btn-primary">Retour à la liste</a>
-            <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}" class="btn btn-warning">Modifier</a>
-        </div>
-
-        <!-- Delete form -->
-        <div class="mt-4">
-            {{ include('atelier/_delete_form.html.twig') }}
-        </div>
+        <!-- Bouton Retour -->
+        <a href="{{ path('app_atelier_index') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-2"></i>Retour à la liste
+        </a>
+        <br>
+        <!-- Bouton Modifier -->
+        <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}" class="btn btn-warning">
+            <i class="bi bi-pencil-square me-2"></i>Modifier
+        </a>
+        <br>
+        <!-- Bouton Supprimer -->
+        {{ include('atelier/_delete_form.html.twig') }}
     </div>
 {% endblock %}
