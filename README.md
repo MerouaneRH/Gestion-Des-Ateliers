@@ -51,3 +51,12 @@ Dans votre conteneur docker` et dans le répertoire du projet, faire
 # Question 6 :
 
 - symfony composer require cebe/markdown "~1.2.0"
+
+# Question 7 :
+
+Un utilisateur avec les coordonnes suivantes a ete cree:
+-Nom:Toto, Prenom:Titi, Email:toto.titi@gmail.com,password:tototiti
+- symfony console make:entity User
+- symfony console make:migration
+- symfony console doctrine:migrations:migrate
+- symfony console doctrine:fixtures:load
