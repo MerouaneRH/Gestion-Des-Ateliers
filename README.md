@@ -31,3 +31,10 @@ Dans votre conteneur docker` et dans le répertoire du projet, faire
 - symfony console make:entity Atelier
 - symfony console make:migration
 - symfony console doctrine:migrations:migrate
+
+# Question 3 :
+
+- symfony composer require orm-fixtures --dev
+- symfony composer require fakerphp/faker
+- symfony console make:fixture
+- symfony console doctrine:fixtures:load
