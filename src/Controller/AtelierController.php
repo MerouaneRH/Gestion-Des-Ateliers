@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Atelier;
+use App\Entity\User;
 use App\Form\AtelierType;
 use App\Repository\AtelierRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -25,7 +26,9 @@ final class AtelierController extends AbstractController
     #[Route('/new', name: 'app_atelier_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        $users = $entityManager->getRepository(User::class)->findAll();
         $atelier = new Atelier();
+        $atelier->setInstructeur($users[array_rand($users)]);
         $form = $this->createForm(AtelierType::class, $atelier);
         $form->handleRequest($request);
 

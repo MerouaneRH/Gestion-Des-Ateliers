@@ -20,6 +20,11 @@ class Atelier
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $instructeur = null;
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -45,6 +50,17 @@ class Atelier
     public function setDescription(string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+    public function getInstructeur(): ?User
+    {
+        return $this->instructeur;
+    }
+
+    public function setInstructeur(?User $instructeur): static
+    {
+        $this->instructeur = $instructeur;
 
         return $this;
     }
