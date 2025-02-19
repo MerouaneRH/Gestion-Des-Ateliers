@@ -1,25 +1,42 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register{% endblock %}
+{% block title %}Inscription{% endblock %}
 
 {% block body %}
-    <h1>Creer un nouveau compte</h1>
+    <div class="card mx-auto mt-5" style="max-width: 500px;">
+        <div class="card-body">
+            <h1 class="h3 mb-3 text-center">Créer un compte</h1>
 
-    {% for label, messages in app.flashes %}
-        <div class="alert alert-{{ label }}">
-            {% for message in messages %}
-                <p>{{ message }}</p>
+            {% for label, messages in app.flashes %}
+                <div class="alert alert-{{ label }}">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
             {% endfor %}
+
+            {{ form_start(form) }}
+            <div class="mb-3">
+                {{ form_row(form.email) }}
+            </div>
+            <div class="mb-3">
+                {{ form_row(form.nom) }}
+            </div>
+            <div class="mb-3">
+                {{ form_row(form.prenom) }}
+            </div>
+            <div class="mb-3">
+                {{ form_row(form.password.first) }}
+            </div>
+            <div class="mb-3">
+                {{ form_row(form.password.second) }}
+            </div>
+
+            {{ form_end(form) }}
+
+            <p class="mt-3 text-center">
+                Vous avez déjà un compte ? <a href="{{ path('app_login') }}">Connectez-vous</a>
+            </p>
         </div>
-    {% endfor %}
-
-    {{ form_start(form) }}
-    {{ form_row(form.email) }}
-    {{ form_row(form.nom) }}
-    {{ form_row(form.prenom) }}
-    {{ form_row(form.password.first) }}
-    {{ form_row(form.password.second) }}
-    {{ form_end(form) }}
-
-    <p>Vous avez deja un compte? <a href="{{ path('app_login') }}">Connetez-vous!</a></p>
+    </div>
 {% endblock %}

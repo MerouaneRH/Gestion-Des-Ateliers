@@ -3,27 +3,30 @@
 {% block title %}Atelier index{% endblock %}
 
 {% block body %}
-    {{ include('atelier/_navbar.html.twig') }}
+    <div class="container mt-5">
+        <!-- Titre de la page avec icône -->
+        <h1 class="mb-4 text-center">
+            <i class="bi bi-list-task me-2"></i>Liste des Ateliers
+        </h1>
 
-    <div class="container mt-5 ">
-        <h1 class="mb-4">Atelier Index</h1>
-
+        <!-- Messages flash -->
         {% for message in app.flashes('error') %}
-            <div class="alert alert-danger">
-                {{ message }}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-circle me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         {% endfor %}
 
-        <!-- Table -->
+        <!-- Tableau -->
         <div class="table-responsive">
-            <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped table-hover">
                 <thead class="table-dark">
                 <tr>
-                    <th>Id</th>
-                    <th>Nom</th>
-                    <td>Nom d'Instructeur</td>
-                    <th>Description</th>
-                    <th>Actions</th>
+                    <th><i class="bi bi-hash me-1"></i>ID</th>
+                    <th><i class="bi bi-card-heading me-1"></i>Nom</th>
+                    <th><i class="bi bi-person me-1"></i>Instructeur</th>
+                    <th><i class="bi bi-card-text me-1"></i>Description</th>
+                    <th><i class="bi bi-gear me-1"></i>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -34,19 +37,28 @@
                         <td>{{ atelier.instructeur.nom }}</td>
                         <td>{{ atelier.description }}</td>
                         <td>
-                            <a href="{{ path('app_atelier_show', {'id': atelier.id}) }}" class="btn btn-info btn-sm">Show</a>
-                            <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}" class="btn btn-warning btn-sm">Edit</a>
+                            <!-- Boutons d'actions alignés et de même taille -->
+                            <div class="d-flex gap-2">
+                                <!-- Bouton Show avec icône -->
+                                <a href="{{ path('app_atelier_show', {'id': atelier.id}) }}" class="btn btn-info btn-sm d-flex align-items-center">
+                                    <i class="bi bi-eye me-1"></i>Voir
+                                </a>
+                                <!-- Bouton Edit avec icône -->
+                                <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}" class="btn btn-warning btn-sm d-flex align-items-center">
+                                    <i class="bi bi-pencil-square me-1"></i>Modifier
+                                </a>
+                            </div>
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="4" class="text-center">Aucun objet trouvé</td>
+                        <td colspan="5" class="text-center">
+                            <i class="bi bi-exclamation-triangle me-2"></i>Aucun atelier trouvé
+                        </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
         </div>
-
     </div>
-
 {% endblock %}
