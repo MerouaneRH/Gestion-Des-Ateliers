@@ -16,3 +16,11 @@ Dans votre conteneur docker` et dans le répertoire du projet, faire
 • symfony console doctrine:fixture:load
 • npm install
 • npm run dev
+
+# Question 1 :
+
+- symfony composer require symfony/webpack-encore-bundle
+- npm install
+- npm install bootstrap
+- npm install bootstrap-icons
+- npm run dev
