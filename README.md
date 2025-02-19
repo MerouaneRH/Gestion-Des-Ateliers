@@ -38,3 +38,8 @@ Dans votre conteneur docker` et dans le répertoire du projet, faire
 - symfony composer require fakerphp/faker
 - symfony console make:fixture
 - symfony console doctrine:fixtures:load
+
+# Question 4 :
+
+- symfony console make:crud Atelier
+- symfony server:start --no-tls --listen-ip=0.0.0.0 --d
