@@ -45,8 +45,13 @@ final class AtelierController extends AbstractController
     #[Route('/{id}', name: 'app_atelier_show', methods: ['GET'])]
     public function show(Atelier $atelier): Response
     {
+        $parser = new \cebe\markdown\Markdown();
+        $description = $parser->parse($atelier->getDescription());
+        $description = str_replace("<p>","",$description);
+        $description = str_replace("</p>","",$description);
         return $this->render('atelier/show.html.twig', [
             'atelier' => $atelier,
+            'description' => $description
         ]);
     }
 

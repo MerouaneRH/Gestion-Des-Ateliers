@@ -47,3 +47,7 @@ Dans votre conteneur docker` et dans le répertoire du projet, faire
 # Question 5 :
 
 - symfony server:start --no-tls --listen-ip=0.0.0.0 --d
+
+# Question 6 :
+
+- symfony composer require cebe/markdown "~1.2.0"
