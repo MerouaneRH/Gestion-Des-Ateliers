@@ -3,28 +3,42 @@
 {% block title %}Atelier{% endblock %}
 
 {% block body %}
-    <h1>Atelier</h1>
+    {{ include('atelier/_navbar.html.twig') }}
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ atelier.id }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ atelier.nom }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ atelier.description }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="container mt-5">
+        <h1 class="mb-4">Atelier Details</h1>
 
-    <a href="{{ path('app_atelier_index') }}">back to list</a>
+        <!-- Table displaying atelier details -->
+        <div class="card">
+            <div class="card-body">
+                <table class="table">
+                    <tbody>
+                    <tr>
+                        <th>ID</th>
+                        <td>{{ atelier.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Nom</th>
+                        <td>{{ atelier.nom }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ atelier.description }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-    <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}">edit</a>
+        <!-- Links to navigate -->
+        <div class="mt-4">
+            <a href="{{ path('app_atelier_index') }}" class="btn btn-primary">Retour à la liste</a>
+            <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}" class="btn btn-warning">Modifier</a>
+        </div>
 
-    {{ include('atelier/_delete_form.html.twig') }}
+        <!-- Delete form -->
+        <div class="mt-4">
+            {{ include('atelier/_delete_form.html.twig') }}
+        </div>
+    </div>
 {% endblock %}

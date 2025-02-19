@@ -43,3 +43,7 @@ Dans votre conteneur docker` et dans le répertoire du projet, faire
 
 - symfony console make:crud Atelier
 - symfony server:start --no-tls --listen-ip=0.0.0.0 --d
+
+# Question 5 :
+
+- symfony server:start --no-tls --listen-ip=0.0.0.0 --d

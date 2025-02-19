@@ -1,11 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New Atelier{% endblock %}
+{% block title %}Create New Atelier{% endblock %}
 
 {% block body %}
-    <h1>Create new Atelier</h1>
+    {{ include('atelier/_navbar.html.twig') }}
 
-    {{ include('atelier/_form.html.twig') }}
+    <div class="container mt-5">
+        <h1 class="mb-4">Create New Atelier</h1>
 
-    <a href="{{ path('app_atelier_index') }}">back to list</a>
+        <!-- Formulaire de création -->
+        <div class="card">
+            <div class="card-body">
+                {{ include('atelier/_form.html.twig') }}
+            </div>
+        </div>
+
+        <!-- Lien vers la liste -->
+        <div class="mt-4">
+            <a href="{{ path('app_atelier_index') }}" class="btn btn-secondary">Back to list</a>
+        </div>
+    </div>
 {% endblock %}

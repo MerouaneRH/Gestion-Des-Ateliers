@@ -3,35 +3,42 @@
 {% block title %}Atelier index{% endblock %}
 
 {% block body %}
-    <h1>Atelier index</h1>
+    {{ include('atelier/_navbar.html.twig') }}
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Nom</th>
-                <th>Description</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for atelier in ateliers %}
-            <tr>
-                <td>{{ atelier.id }}</td>
-                <td>{{ atelier.nom }}</td>
-                <td>{{ atelier.description }}</td>
-                <td>
-                    <a href="{{ path('app_atelier_show', {'id': atelier.id}) }}">show</a>
-                    <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="container mt-5 ">
+        <h1 class="mb-4">Atelier Index</h1>
 
-    <a href="{{ path('app_atelier_new') }}">Create new</a>
+        <!-- Table -->
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Nom</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for atelier in ateliers %}
+                    <tr>
+                        <td>{{ atelier.id }}</td>
+                        <td>{{ atelier.nom }}</td>
+                        <td>{{ atelier.description }}</td>
+                        <td>
+                            <a href="{{ path('app_atelier_show', {'id': atelier.id}) }}" class="btn btn-info btn-sm">Show</a>
+                            <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}" class="btn btn-warning btn-sm">Edit</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center">Aucun objet trouvé</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+
+    </div>
 {% endblock %}
