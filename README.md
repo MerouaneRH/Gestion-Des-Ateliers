@@ -24,3 +24,10 @@ Dans votre conteneur docker` et dans le répertoire du projet, faire
 - npm install bootstrap
 - npm install bootstrap-icons
 - npm run dev
+
+# Question 2 :
+
+- symfony console doctrine:database:create
+- symfony console make:entity Atelier
+- symfony console make:migration
+- symfony console doctrine:migrations:migrate
