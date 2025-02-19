@@ -67,3 +67,7 @@ Un utilisateur avec les coordonnes suivantes a ete cree:
 - symfony console make:migration
 - symfony console doctrine:migrations:migrate
 - symfony console doctrine:fixtures:load
+
+# Question 9 :
+
+- symfony server:start --no-tls --listen-ip=0.0.0.0 --d

@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/atelier')]
 final class AtelierController extends AbstractController
@@ -26,9 +27,17 @@ final class AtelierController extends AbstractController
     #[Route('/new', name: 'app_atelier_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+        if (!in_array('ROLE_INSTRUCTEUR', $this->getUser()->getRoles())) {
+            throw new AccessDeniedException('Vous devez être un instructeur pour créer un atelier.');
+        }
+        $this->denyAccessUnlessGranted('ROLE_INSTRUCTEUR');
         $users = $entityManager->getRepository(User::class)->findAll();
         $atelier = new Atelier();
-        $atelier->setInstructeur($users[array_rand($users)]);
+        //$atelier->setInstructeur($users[array_rand($users)]);
+        $atelier->setInstructeur($this->getUser());
         $form = $this->createForm(AtelierType::class, $atelier);
         $form->handleRequest($request);
 
