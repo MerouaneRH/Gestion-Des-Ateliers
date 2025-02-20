@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AtelierRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -24,6 +26,13 @@ class Atelier
     #[ORM\JoinColumn(nullable: false)]
     private ?User $instructeur = null;
 
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'ateliers')]
+    private Collection $inscrits;
+
+    public function __construct()
+    {
+        $this->inscrits = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -38,7 +47,6 @@ class Atelier
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -50,9 +58,9 @@ class Atelier
     public function setDescription(string $description): static
     {
         $this->description = $description;
-
         return $this;
     }
+
     public function getInstructeur(): ?User
     {
         return $this->instructeur;
@@ -61,7 +69,23 @@ class Atelier
     public function setInstructeur(?User $instructeur): static
     {
         $this->instructeur = $instructeur;
-
         return $this;
+    }
+
+    public function getInscrits(): Collection
+    {
+        return $this->inscrits;
+    }
+
+    public function ajouterInscrit(User $user): void
+    {
+        if (!$this->inscrits->contains($user)) {
+            $this->inscrits->add($user);
+        }
+    }
+
+    public function retirerInscrit(User $user): void
+    {
+        $this->inscrits->removeElement($user);
     }
 }
