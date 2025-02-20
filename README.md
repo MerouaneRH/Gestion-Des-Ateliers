@@ -93,3 +93,8 @@ Seul l'auteur d'atelier peut maintenant modifier et suprimer son atelier
 Tout utilisateur connecté peut voir les ateliers auxquels il est inscrit, ainsi que la liste des utilisateurs inscrits à chaque atelier
 
 - symfony server:start --no-tls --listen-ip=0.0.0.0
+
+# Question 14 :
+
+- symfony console doctrine:fixture:load
+- symfony server:start --no-tls --listen-ip=0.0.0.0
