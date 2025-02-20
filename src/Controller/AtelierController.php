@@ -24,6 +24,24 @@ final class AtelierController extends AbstractController
         ]);
     }
 
+    #[Route('/mesinscriptions', name: 'mes_inscriptions', methods: ['GET'])]
+    public function mesInscriptions(): Response
+    {
+        // Vérifier que l'utilisateur est bien un apprenti
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Récupérer les ateliers où l'utilisateur est inscrit
+        $ateliers = $user->getAteliers();
+
+
+        return $this->render('atelier/mes_inscriptions.html.twig', [
+            'ateliers' => $ateliers,
+        ]);
+    }
+
     #[Route('/new', name: 'app_atelier_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
