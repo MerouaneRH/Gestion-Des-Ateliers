@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Inscriptions{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h2 class="text-center text-primary fw-bold">
+            <i class="bi bi-journal-check"></i> Mes Inscriptions
+        </h2>
+        <hr class="mb-4">
+
+        {% if ateliers is not empty %}
+            <div class="row">
+                {% for atelier in ateliers %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card shadow-sm mb-4 border-0">
+                            <div class="card-body">
+                                <h5 class="card-title text-dark fw-bold">
+                                    <i class="bi bi-book"></i> {{ atelier.nom }}
+                                </h5>
+                                <h6 class="card-subtitle mb-2 text-muted">
+                                    <i class="bi bi-person"></i> {{ atelier.instructeur.nom }}
+                                </h6>
+                                <p class="card-text text-secondary">
+                                    {{ atelier.description|slice(0, 100) ~ '...' }}
+                                </p>
+                                <a href="{{ path('app_atelier_show', {'id': atelier.id}) }}" class="btn btn-primary w-100">
+                                    <i class="bi bi-eye"></i> Voir plus
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info text-center mt-4" role="alert">
+                <i class="bi bi-exclamation-circle"></i> Vous n'êtes inscrit à aucun atelier pour le moment.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
