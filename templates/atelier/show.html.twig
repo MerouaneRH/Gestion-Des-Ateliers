@@ -6,7 +6,21 @@
     <div class="container mt-4">
         <h1 class="mb-4 text-center">{{ atelier.nom }}</h1>
 
-        <!-- Carte pour afficher les détails de l'atelier -->
+        <!-- Messages flash -->
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-circle me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
         <div class="card shadow-sm">
             <div class="card-body">
                 <h5 class="card-title mb-3">Détails de l'atelier</h5>
@@ -25,17 +39,42 @@
             </div>
         </div>
 
-        <!-- Bouton Retour -->
+        <div class="mt-3">
+            <!-- Vérifier si l'utilisateur est connecté -->
+            {% if app.user %}
+                <!-- Vérifier si l'utilisateur est déjà inscrit -->
+                {% if app.user in atelier.inscrits %}
+                    <form action="{{ path('app_atelier_desinscription', {'id': atelier.id}) }}" method="post">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-x-circle me-2"></i> Se désinscrire
+                        </button>
+                    </form>
+                {% else %}
+                    <form action="{{ path('app_atelier_inscription', {'id': atelier.id}) }}" method="post">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-check-circle me-2"></i> S'inscrire
+                        </button>
+                    </form>
+                {% endif %}
+            {% else %}
+                <p class="text-center text-muted">Vous devez être connecté pour vous inscrire à cet atelier.</p>
+                <a href="{{ path('app_login') }}" class="btn btn-primary">Se connecter</a>
+            {% endif %}
+        </div>
+
+        <br>
+
         <a href="{{ path('app_atelier_index') }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left me-2"></i>Retour à la liste
         </a>
         <br>
-        <!-- Bouton Modifier -->
-        <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}" class="btn btn-warning">
-            <i class="bi bi-pencil-square me-2"></i>Modifier
-        </a>
-        <br>
-        <!-- Bouton Supprimer -->
-        {{ include('atelier/_delete_form.html.twig') }}
+
+        {% if app.user and app.user == atelier.instructeur %}
+            <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}" class="btn btn-warning">
+                <i class="bi bi-pencil-square me-2"></i>Modifier
+            </a>
+            <br>
+            {{ include('atelier/_delete_form.html.twig') }}
+        {% endif %}
     </div>
 {% endblock %}

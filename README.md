@@ -81,3 +81,9 @@ Seul l'auteur d'atelier peut maintenant modifier et suprimer son atelier
 # Question 11 :
 
 - symfony server:start --no-tls --listen-ip=0.0.0.0 --d
+
+# Question 12 :
+
+- symfony console make:crud Atelier
+- symfony console make:migration
+- symfony console doctrine:migrations:migrate

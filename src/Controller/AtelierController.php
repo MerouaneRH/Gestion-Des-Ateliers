@@ -104,4 +104,42 @@ final class AtelierController extends AbstractController
 
         return $this->redirectToRoute('app_atelier_index', [], Response::HTTP_SEE_OTHER);
     }
+    #[Route('/{id}/inscription', name: 'app_atelier_inscription', methods: ['POST'])]
+    public function inscription(Atelier $atelier, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        if (!$atelier->getInscrits()->contains($user)) {
+            $atelier->ajouterInscrit($user);
+            $entityManager->flush();
+            $this->addFlash('success', 'Vous êtes inscrit à cet atelier.');
+        } else {
+            $this->addFlash('warning', 'Vous êtes déjà inscrit à cet atelier.');
+        }
+
+        return $this->redirectToRoute('app_atelier_show', ['id' => $atelier->getId()]);
+    }
+
+    #[Route('/{id}/desinscription', name: 'app_atelier_desinscription', methods: ['POST'])]
+    public function desinscription(Atelier $atelier, EntityManagerInterface $entityManager): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        if ($atelier->getInscrits()->contains($user)) {
+            $atelier->retirerInscrit($user);
+            $entityManager->flush();
+            $this->addFlash('success', 'Vous vous êtes désinscrit de cet atelier.');
+        } else {
+            $this->addFlash('warning', 'Vous n\'êtes pas inscrit à cet atelier.');
+        }
+
+        return $this->redirectToRoute('app_atelier_show', ['id' => $atelier->getId()]);
+    }
+
 }
