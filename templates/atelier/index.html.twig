@@ -1,18 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Atelier index{% endblock %}
+{% block title %}Atelier Index{% endblock %}
 
 {% block body %}
     <div class="container mt-5">
         <!-- Titre de la page avec icône -->
-        <h1 class="mb-4 text-center">
-            <i class="bi bi-list-task me-2"></i>Liste des Ateliers
+        <h1 class="mb-4 text-center text-primary fw-bold">
+            <i class="bi bi-list-task me-2"></i> Liste des Ateliers
         </h1>
 
         <!-- Tableau -->
         <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover">
-                <thead class="table-dark">
+            <table class="table table-bordered table-hover shadow-sm">
+                <thead class="table-dark text-center">
                 <tr>
                     <th><i class="bi bi-hash me-1"></i>ID</th>
                     <th><i class="bi bi-card-heading me-1"></i>Nom</th>
@@ -24,22 +24,23 @@
                 </thead>
                 <tbody>
                 {% for atelier in ateliers %}
-                    <tr>
-                        <td>{{ atelier.id }}</td>
-                        <td>{{ atelier.nom }}</td>
-                        <td>{{ atelier.instructeur.nom }}</td>
-                        <td>{{ atelier.description }}</td>
+                    <tr class="align-middle text-center">
+                        <td class="fw-bold text-secondary">{{ atelier.id }}</td>
+                        <td class="fw-bold text-dark">{{ atelier.nom }}</td>
+                        <td class="text-success">{{ atelier.instructeur.nom }}</td>
+                        <td class="text-muted text-start" style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            {{ atelier.description }}
+                        </td>
                         <td>
-                            <!-- Boutons d'actions alignés et de même taille -->
-                            <div class="d-flex gap-2">
+                            <div class="d-flex justify-content-center gap-2">
                                 <!-- Bouton Voir -->
-                                <a href="{{ path('app_atelier_show', {'id': atelier.id}) }}" class="btn btn-info btn-sm d-flex align-items-center">
-                                    <i class="bi bi-eye me-1"></i>Voir
+                                <a href="{{ path('app_atelier_show', {'id': atelier.id}) }}" class="btn btn-info btn-sm">
+                                    <i class="bi bi-eye me-1"></i> Voir
                                 </a>
-                                <!-- Bouton Modifier (si l'utilisateur est instructeur de l'atelier) -->
+                                <!-- Bouton Modifier -->
                                 {% if app.user and app.user == atelier.instructeur %}
-                                    <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}" class="btn btn-warning btn-sm d-flex align-items-center">
-                                        <i class="bi bi-pencil-square me-1"></i>Modifier
+                                    <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}" class="btn btn-warning btn-sm">
+                                        <i class="bi bi-pencil-square me-1"></i> Modifier
                                     </a>
                                 {% endif %}
                             </div>
@@ -50,14 +51,14 @@
                                     <!-- Bouton Se désinscrire -->
                                     <form action="{{ path('app_atelier_desinscription', {'id': atelier.id}) }}" method="post">
                                         <button type="submit" class="btn btn-danger btn-sm">
-                                            <i class="bi bi-x-circle me-1"></i>Se désinscrire
+                                            <i class="bi bi-x-circle me-1"></i> Se désinscrire
                                         </button>
                                     </form>
                                 {% else %}
                                     <!-- Bouton S'inscrire -->
                                     <form action="{{ path('app_atelier_inscription', {'id': atelier.id}) }}" method="post">
                                         <button type="submit" class="btn btn-success btn-sm">
-                                            <i class="bi bi-check-circle me-1"></i>S'inscrire
+                                            <i class="bi bi-check-circle me-1"></i> S'inscrire
                                         </button>
                                     </form>
                                 {% endif %}
@@ -68,8 +69,9 @@
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="6" class="text-center">
-                            <i class="bi bi-exclamation-triangle me-2"></i>Aucun atelier trouvé
+                        <td colspan="6" class="text-center text-muted p-4">
+                            <i class="bi bi-exclamation-triangle me-2 text-warning"></i>
+                            Aucun atelier trouvé
                         </td>
                     </tr>
                 {% endfor %}

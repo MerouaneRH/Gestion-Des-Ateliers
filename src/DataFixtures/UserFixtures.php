@@ -3,6 +3,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Atelier;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -29,6 +30,7 @@ class UserFixtures extends Fixture
         $manager->persist($user);
         $manager->flush();
         $faker = Factory::create('fr_FR');
+        $users = [];
 
         for ($i = 1; $i <= 9; $i++) {
             $user = new User();
@@ -40,6 +42,18 @@ class UserFixtures extends Fixture
             $user->setRoles(['ROLE_INSTRUCTEUR']);
 
             $manager->persist($user);
+        }
+
+        $manager->flush();
+
+        $ateliers = $manager->getRepository(Atelier::class)->findAll();
+
+        foreach ($users as $user) {
+            $inscriptions = $faker->randomElements($ateliers, mt_rand(1, 3));
+            foreach ($inscriptions as $atelier) {
+                $user->getAteliers()->add($atelier);
+                $atelier->ajouterInscrit($user);
+            }
         }
 
         $manager->flush();

@@ -20,6 +20,13 @@ class AtelierFixtures extends Fixture implements DependentFixtureInterface
             $atelier->setNom($faker->sentence)
                 ->setDescription("<p>" . join("</p><p>", $faker->paragraphs(3)) . "</p>");
             $atelier->setInstructeur($users[array_rand($users)]);
+
+            // Ajouter des utilisateurs inscrits aléatoirement
+            $inscrits = $faker->randomElements($users, mt_rand(2, 5));
+            foreach ($inscrits as $user) {
+                $atelier->ajouterInscrit($user);
+            }
+
             $manager->persist($atelier);
         }
 
