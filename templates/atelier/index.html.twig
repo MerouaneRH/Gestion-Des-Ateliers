@@ -1,18 +1,19 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Atelier Index{% endblock %}
+{% block title %}Liste des Ateliers{% endblock %}
 
 {% block body %}
     <div class="container mt-5">
-        <!-- Titre de la page avec icône -->
-        <h1 class="mb-4 text-center text-primary fw-bold">
-            <i class="bi bi-list-task me-2"></i> Liste des Ateliers
+        <!-- Titre principal -->
+        <h1 class="text-center text-light fw-bold">
+            <i class="bi bi-list-task text-warning"></i> Liste des Ateliers
         </h1>
+        <hr class="mb-4">
 
-        <!-- Tableau -->
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover shadow-sm">
-                <thead class="table-dark text-center">
+        <!-- Tableau stylisé -->
+        <div class="table-responsive glass-effect p-4">
+            <table class="table table-hover text-light text-center align-middle">
+                <thead class="table-dark">
                 <tr>
                     <th><i class="bi bi-hash me-1"></i>ID</th>
                     <th><i class="bi bi-card-heading me-1"></i>Nom</th>
@@ -26,22 +27,20 @@
                 </thead>
                 <tbody>
                 {% for atelier in ateliers %}
-                    <tr class="align-middle text-center">
-                        <td class="fw-bold text-secondary">{{ atelier.id }}</td>
-                        <td class="fw-bold text-dark">{{ atelier.nom }}</td>
-                        <td class="text-success">{{ atelier.instructeur.nom }}</td>
-                        <td class="text-muted text-start" style="max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                            {{ atelier.description }}
+                    <tr class="hover-effect">
+                        <td class="fw-bold text-warning">{{ atelier.id }}</td>
+                        <td class="fw-bold text-light">{{ atelier.nom }}</td>
+                        <td class="text-info">{{ atelier.instructeur.nom }}</td>
+                        <td class="text-light text-start" style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            {{ atelier.description |raw }}
                         </td>
                         <td>
                             <div class="d-flex justify-content-center gap-2">
-                                <!-- Bouton Voir -->
-                                <a href="{{ path('app_atelier_show', {'id': atelier.id}) }}" class="btn btn-info btn-sm">
+                                <a href="{{ path('app_atelier_show', {'id': atelier.id}) }}" class="btn btn-outline-info btn-sm rounded-pill shadow-sm">
                                     <i class="bi bi-eye me-1"></i> Voir
                                 </a>
-                                <!-- Bouton Modifier (seulement pour l'instructeur de l'atelier) -->
                                 {% if app.user and 'ROLE_INSTRUCTEUR' in app.user.roles and app.user == atelier.instructeur %}
-                                    <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}" class="btn btn-warning btn-sm">
+                                    <a href="{{ path('app_atelier_edit', {'id': atelier.id}) }}" class="btn btn-outline-warning btn-sm rounded-pill shadow-sm">
                                         <i class="bi bi-pencil-square me-1"></i> Modifier
                                     </a>
                                 {% endif %}
@@ -50,16 +49,14 @@
                         {% if app.user and 'ROLE_APPRENTI' in app.user.roles %}
                             <td>
                                 {% if app.user in atelier.inscrits %}
-                                    <!-- Bouton Se désinscrire -->
                                     <form action="{{ path('app_atelier_desinscription', {'id': atelier.id}) }}" method="post">
-                                        <button type="submit" class="btn btn-danger btn-sm">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm rounded-pill shadow-sm">
                                             <i class="bi bi-x-circle me-1"></i> Se désinscrire
                                         </button>
                                     </form>
                                 {% else %}
-                                    <!-- Bouton S'inscrire -->
                                     <form action="{{ path('app_atelier_inscription', {'id': atelier.id}) }}" method="post">
-                                        <button type="submit" class="btn btn-success btn-sm">
+                                        <button type="submit" class="btn btn-outline-success btn-sm rounded-pill shadow-sm">
                                             <i class="bi bi-check-circle me-1"></i> S'inscrire
                                         </button>
                                     </form>
@@ -70,7 +67,7 @@
                 {% else %}
                     <tr>
                         <td colspan="{% if app.user and 'ROLE_APPRENTI' in app.user.roles %}6{% else %}5{% endif %}"
-                            class="text-center text-muted p-4">
+                            class="text-center text-light p-4">
                             <i class="bi bi-exclamation-triangle me-2 text-warning"></i>
                             Aucun atelier trouvé
                         </td>
@@ -80,4 +77,78 @@
             </table>
         </div>
     </div>
+
+    <style>
+        /* 🌌 Arrière-plan futuriste */
+        body {
+            background: linear-gradient(to right, #430C05, #00353F);
+            font-family: 'Poppins', sans-serif;
+            color: #FFBF66;
+        }
+        /* 🌑 Assombrir les colonnes Nom et Description */
+        .table td:nth-child(2), /* Colonne Nom */
+        .table td:nth-child(4) { /* Colonne Description */
+            color: black !important;
+            font-weight: bold;
+        }
+
+        /* ✨ Effet Glassmorphism */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 15px;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0px 10px 30px rgba(255, 255, 255, 0.1);
+        }
+
+        /* 🖥 Tableau stylisé */
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table-dark {
+            background-color: #212E53 !important;
+            color: white;
+        }
+
+        .table-hover tbody tr:hover {
+            background: rgba(255, 191, 102, 0.2);
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* 🎭 Animation de survol */
+        .hover-effect {
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .hover-effect:hover {
+            transform: scale(1.02);
+        }
+
+        /* 🎨 Boutons stylisés */
+        .btn-outline-info, .btn-outline-warning, .btn-outline-danger, .btn-outline-success {
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-outline-info:hover {
+            background: #08C5D1;
+            color: white;
+        }
+
+        .btn-outline-warning:hover {
+            background: #D46F4D;
+            color: white;
+        }
+
+        .btn-outline-danger:hover {
+            background: #CE6A6B;
+            color: white;
+        }
+
+        .btn-outline-success:hover {
+            background: #4A919E;
+            color: white;
+        }
+    </style>
 {% endblock %}
