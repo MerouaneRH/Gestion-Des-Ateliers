@@ -98,3 +98,9 @@ Tout utilisateur connecté peut voir les ateliers auxquels il est inscrit, ainsi
 
 - symfony console doctrine:fixture:load
 - symfony server:start --no-tls --listen-ip=0.0.0.0
+
+# Question 15 :
+- symfony console make:migration
+- symfony console doctrine:migrations:migrate
+- symfony console doctrine:fixtures:load
+- symfony server:start --no-tls --listen-ip=0.0.0.0

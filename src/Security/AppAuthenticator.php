@@ -1,17 +1,12 @@
 <?php
 
-
 namespace App\Security;
 
-use App\Entity\User;
-use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\CsrfTokenBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
@@ -24,14 +19,9 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
-    private UserPasswordHasherInterface $passwordHasher;
-
     public const LOGIN_ROUTE = 'app_login';
 
-    public function __construct(UserPasswordHasherInterface $passwordHasher, private UrlGeneratorInterface $urlGenerator)
-    {
-        $this->passwordHasher = $passwordHasher;
-    }
+    public function __construct(private UrlGeneratorInterface $urlGenerator) {}
 
     public function authenticate(Request $request): Passport
     {
@@ -56,11 +46,15 @@ class AppAuthenticator extends AbstractLoginFormAuthenticator
     {
         $user = $token->getUser();
 
-        if (in_array('ROLE_INSTRUCTEUR', $user->getRoles())) {
-            return new RedirectResponse($this->urlGenerator->generate('app_atelier_index'));
+        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+            return new RedirectResponse($this->urlGenerator->generate('admin_instructeurs')); // Redirection admin
         }
 
-        return new RedirectResponse($this->urlGenerator->generate('app_home'));
+        if (in_array('ROLE_INSTRUCTEUR', $user->getRoles())) {
+            return new RedirectResponse($this->urlGenerator->generate('app_atelier_index')); // Redirection instructeur
+        }
+
+        return new RedirectResponse($this->urlGenerator->generate('app_login')); // Redirection par défaut
     }
 
     protected function getLoginUrl(Request $request): string
