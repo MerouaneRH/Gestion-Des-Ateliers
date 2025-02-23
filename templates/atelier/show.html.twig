@@ -39,6 +39,27 @@
             </div>
         </div>
 
+        <!-- Affichage de la moyenne des notes -->
+        <div class="mt-4">
+            {% if moyenne_notes > 0 %}
+                <div class="alert alert-info">
+                    <i class="bi bi-star-fill"></i> Note moyenne : <strong>{{ moyenne_notes }}</strong>/5
+                </div>
+            {% else %}
+                <p class="text-muted">Cet atelier n'a pas encore reçu de notes.</p>
+            {% endif %}
+        </div>
+
+        <!-- Affichage du graphique des notes -->
+        {% if notes_data is not empty %}
+            <div class="card mt-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Répartition des notes</h5>
+                    <canvas id="chartNotes" ></canvas>
+                </div>
+            </div>
+        {% endif %}
+
         <!-- Liste des apprentis inscrits (visible uniquement pour les instructeurs) -->
         {% if app.user and 'ROLE_INSTRUCTEUR' in app.user.roles %}
             <div class="card mt-3 shadow-sm">
@@ -75,6 +96,11 @@
                         </button>
                     </form>
                 {% endif %}
+
+                <!-- Bouton pour noter l'atelier -->
+                <a href="{{ path('app_atelier_noter', {'id': atelier.id}) }}" class="btn btn-primary mt-3">
+                    <i class="bi bi-pencil-square"></i> Noter cet atelier
+                </a>
             {% endif %}
         </div>
 
@@ -93,4 +119,31 @@
             {{ include('atelier/_delete_form.html.twig') }}
         {% endif %}
     </div>
+
+    <!-- Script Chart.js pour afficher les notes -->
+    {% if notes_data is not empty %}
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            var ctx = document.getElementById('chartNotes').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['0', '1', '2', '3', '4', '5'],
+                    datasets: [{
+                        label: 'Nombre de votes',
+                        data: {{ notes_data|json_encode|raw }},
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: false, // 🔥 Désactiver la mise à l'échelle automatique
+                    maintainAspectRatio: true, // 🔥 Permet d'ajuster la taille librement
+                    width: 900,  // 🔥 Largeur personnalisée
+                    height: 700,  // 🔥 Hauteur personnalisée
+                }
+            });
+        </script>
+    {% endif %}
 {% endblock %}

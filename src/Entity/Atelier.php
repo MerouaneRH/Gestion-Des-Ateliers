@@ -29,9 +29,13 @@ class Atelier
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'ateliers')]
     private Collection $inscrits;
 
+    #[ORM\OneToMany(targetEntity: Note::class, mappedBy: 'atelier')]
+    private Collection $notes;
+
     public function __construct()
     {
         $this->inscrits = new ArrayCollection();
+        $this->notes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -87,5 +91,51 @@ class Atelier
     public function retirerInscrit(User $user): void
     {
         $this->inscrits->removeElement($user);
+    }
+
+    /**
+     * @return Collection<int, Note>
+     */
+    public function getNotes(): Collection
+    {
+        return $this->notes;
+    }
+
+    public function addNote(Note $note): static
+    {
+        if (!$this->notes->contains($note)) {
+            $this->notes->add($note);
+            $note->setAtelier($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNote(Note $note): static
+    {
+        if ($this->notes->removeElement($note)) {
+            // set the owning side to null (unless already changed)
+            if ($note->getAtelier() === $this) {
+                $note->setAtelier(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getMoyenneNotes(): float
+    {
+        $totalNotes = 0;
+        $nombreNotes = count($this->notes);
+
+        if ($nombreNotes === 0) {
+            return 0; // Aucun avis donné, moyenne à 0
+        }
+
+        foreach ($this->notes as $note) {
+            $totalNotes += $note->getNote();
+        }
+
+        return round($totalNotes / $nombreNotes, 1); // Arrondi à 1 chiffre après la virgule
     }
 }

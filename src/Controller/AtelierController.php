@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use App\Entity\Note;
+use App\Form\NoteType;
+use App\Repository\NoteRepository;
 
 #[Route('/atelier')]
 final class AtelierController extends AbstractController
@@ -61,16 +64,25 @@ final class AtelierController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_atelier_show', methods: ['GET'])]
-    public function show(Atelier $atelier = null): Response
+    public function show(Atelier $atelier, NoteRepository $noteRepository): Response
     {
         if (!$atelier) {
             $this->addFlash('error', 'Cet atelier n\'existe pas.');
             return $this->redirectToRoute('app_atelier_index');
         }
 
+        // Récupération des notes pour Chart.js
+        $notesCount = array_fill(0, 6, 0); // Initialiser un tableau pour compter les notes de 0 à 5
+
+        foreach ($atelier->getNotes() as $note) {
+            $notesCount[(int) $note->getNote()]++; // Compter le nombre de votes pour chaque note
+        }
+
         return $this->render('atelier/show.html.twig', [
             'atelier' => $atelier,
             'description' => (new \cebe\markdown\Markdown())->parse($atelier->getDescription()),
+            'moyenne_notes' => $atelier->getMoyenneNotes(),
+            'notes_data' => $notesCount, // Envoi des données des notes à Twig
         ]);
     }
 
@@ -152,4 +164,52 @@ final class AtelierController extends AbstractController
 
         return $this->redirectToRoute('app_atelier_show', ['id' => $atelier->getId()]);
     }
+    #[Route('/{id}/noter', name: 'app_atelier_noter', methods: ['GET', 'POST'])]
+    public function noter(Request $request, Atelier $atelier, EntityManagerInterface $entityManager, NoteRepository $noteRepository): Response
+    {
+        $user = $this->getUser();
+
+        // Vérifier si l'utilisateur est bien un apprenti
+        if (!$user || !in_array('ROLE_APPRENTI', $user->getRoles())) {
+            $this->addFlash('error', 'Seuls les apprentis peuvent noter un atelier.');
+            return $this->redirectToRoute('app_atelier_show', ['id' => $atelier->getId()]);
+        }
+
+        // 🚨 Vérifier si l'apprenti est bien inscrit à l'atelier
+        if (!$atelier->getInscrits()->contains($user)) {
+            $this->addFlash('error', 'Vous devez être inscrit à cet atelier pour pouvoir le noter.');
+            return $this->redirectToRoute('app_atelier_show', ['id' => $atelier->getId()]);
+        }
+
+        // Vérifier si l'apprenti a déjà noté cet atelier
+        $noteExistante = $noteRepository->findOneBy([
+            'apprenti' => $user,
+            'atelier' => $atelier,
+        ]);
+
+        if (!$noteExistante) {
+            $note = new Note();
+            $note->setApprenti($user);
+            $note->setAtelier($atelier);
+        } else {
+            $note = $noteExistante; // Modifier la note existante
+        }
+
+        $form = $this->createForm(NoteType::class, $note);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($note);
+            $entityManager->flush();
+            $this->addFlash('success', 'Votre note a été enregistrée.');
+            return $this->redirectToRoute('app_atelier_show', ['id' => $atelier->getId()]);
+        }
+
+        return $this->render('atelier/noter.html.twig', [
+            'atelier' => $atelier,
+            'form' => $form->createView(),
+        ]);
+    }
+
+
 }

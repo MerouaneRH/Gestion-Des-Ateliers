@@ -41,3 +41,5 @@ security:
         - { path: ^/atelier/\d+/desinscription, roles: ROLE_APPRENTI }
         - { path: ^/mesinscriptions, roles: ROLE_APPRENTI }
 
+        # 🔒 Seuls les apprentis peuvent noter les ateliers
+        - { path: ^/atelier/\d+/noter, roles: ROLE_APPRENTI }

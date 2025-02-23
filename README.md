@@ -110,3 +110,12 @@ Tout utilisateur connecté peut voir les ateliers auxquels il est inscrit, ainsi
 - symfony console doctrine:migrations:migrate
 - symfony console doctrine:fixtures:load
 - symfony server:start --no-tls --listen-ip=0.0.0.0
+
+# Question 17 :
+- php bin/console make:entity Note
+- php bin/console make:form NoteType
+- php bin/console make:fixture NoteFixtures
+- symfony console make:migration
+- symfony console doctrine:migrations:migrate
+- symfony console doctrine:fixtures:load
+- symfony server:start --no-tls --listen-ip=0.0.0.0
