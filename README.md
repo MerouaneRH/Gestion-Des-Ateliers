@@ -119,3 +119,35 @@ Tout utilisateur connecté peut voir les ateliers auxquels il est inscrit, ainsi
 - symfony console doctrine:migrations:migrate
 - symfony console doctrine:fixtures:load
 - symfony server:start --no-tls --listen-ip=0.0.0.0
+
+# Question 18 :
+- symfony console make:migration
+- symfony console doctrine:migrations:migrate
+- symfony console doctrine:fixtures:load
+- symfony server:start --no-tls --listen-ip=0.0.0.0 --d
+
+
+
+# 🛠️ Comptes de test pour l'application
+
+Pour faciliter vos tests, voici les comptes disponibles selon leur rôle :
+
+| Rôle          | Email                  | Mot de passe   |
+|--------------|------------------------|---------------|
+| **Admin**    | `admin@example.com`    | `admin123`    |
+| **Apprenti** | `apprenti@example.com` | `apprenti123` |
+| **Instructeur** | `toto.titi@gmail.com` | `tototiti` |
+
+---
+
+> ⚠ **Attention : Note importante sur la modification des ateliers !**
+
+Dans notre projet, **seul l'instructeur propriétaire d'un atelier peut le modifier**.  
+Si vous testez avec un compte instructeur sans atelier associé, vous ne verrez **pas** le bouton "Modifier" à côté des ateliers.
+
+### 📌 Comment tester la modification d'un atelier ?
+1. **Créer un nouvel atelier avec le compte instructeur actuel**
+2. **Récupérer un autre compte instructeur généré par Faker** en exécutant la commande suivante :
+   ```bash
+   php bin/console doctrine:query:sql "SELECT * FROM user;"
+🔑 Les comptes générés par Faker ont comme mot de passe par défaut : password
