@@ -26,6 +26,18 @@ security:
                 path: app_logout
                 target: app_login
 
-
     access_control:
-        #- { path: ^/admin, roles: ROLE_ADMIN }
+        # 🔒 La section admin est réservée aux administrateurs
+        - { path: ^/admin, roles: ROLE_ADMIN }
+
+        # 🔒 Les instructeurs peuvent gérer leurs ateliers
+        - { path: ^/atelier/new, roles: ROLE_INSTRUCTEUR }
+        - { path: ^/atelier/\d+/edit, roles: ROLE_INSTRUCTEUR }
+        - { path: ^/atelier/\d+/delete, roles: ROLE_INSTRUCTEUR }
+        - { path: ^/atelier/\d+/liste_inscrits, roles: ROLE_INSTRUCTEUR }
+
+        # 🔒 Seuls les apprentis peuvent s'inscrire/désinscrire aux ateliers
+        - { path: ^/atelier/\d+/inscription, roles: ROLE_APPRENTI }
+        - { path: ^/atelier/\d+/desinscription, roles: ROLE_APPRENTI }
+        - { path: ^/mesinscriptions, roles: ROLE_APPRENTI }
+

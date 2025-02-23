@@ -2,7 +2,6 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Atelier;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -20,6 +19,8 @@ class UserFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        $faker = Factory::create('fr_FR');
+
         // Ajout de l'administrateur
         $admin = new User();
         $admin->setEmail('admin@example.com');
@@ -29,44 +30,51 @@ class UserFixtures extends Fixture
         $admin->setRoles(['ROLE_ADMIN']);
         $manager->persist($admin);
 
-        // Ajout de l'instructeur de test
-        $user = new User();
-        $user->setEmail('toto.titi@gmail.com');
-        $user->setPassword($this->passwordHasher->hashPassword($user, 'tototiti'));
-        $user->setNom('Toto');
-        $user->setPrenom('Titi');
-        $user->setRoles(['ROLE_INSTRUCTEUR']);
-        $manager->persist($user);
+        // Ajout d'un apprenti pour le test
+        $apprenti = new User();
+        $apprenti->setEmail('apprenti@example.com');
+        $apprenti->setPassword($this->passwordHasher->hashPassword($apprenti, 'apprenti123'));
+        $apprenti->setNom('Dupont');
+        $apprenti->setPrenom('Jean');
+        $apprenti->setRoles(['ROLE_APPRENTI']);
+        $manager->persist($apprenti);
 
-        $manager->flush();
+        // Ajout d'un instructeur de test
+        $testInstructor = new User();
+        $testInstructor->setEmail('toto.titi@gmail.com');
+        $testInstructor->setPassword($this->passwordHasher->hashPassword($testInstructor, 'tototiti'));
+        $testInstructor->setNom('Toto');
+        $testInstructor->setPrenom('Titi');
+        $testInstructor->setRoles(['ROLE_INSTRUCTEUR']);
+        $manager->persist($testInstructor);
+        $this->addReference('instructeur_1', $testInstructor);
 
-        $faker = Factory::create('fr_FR');
-        $users = [];
+        // Génération de 5 instructeurs aléatoires
+        for ($i = 2; $i <= 6; $i++) {
+            $instructeur = new User();
+            $instructeur->setEmail($faker->unique()->email);
+            $instructeur->setPassword($this->passwordHasher->hashPassword($instructeur, 'password'));
+            $instructeur->setNom($faker->lastName);
+            $instructeur->setPrenom($faker->firstName);
+            $instructeur->setRoles(['ROLE_INSTRUCTEUR']);
 
-        for ($i = 1; $i <= 9; $i++) {
-            $user = new User();
-
-            $user->setEmail($faker->unique()->email);
-            $user->setPassword($this->passwordHasher->hashPassword($user, 'secret'));
-            $user->setNom($faker->lastName);
-            $user->setPrenom($faker->firstName);
-            $user->setRoles(['ROLE_INSTRUCTEUR']);
-
-            $manager->persist($user);
+            $manager->persist($instructeur);
+            $this->addReference('instructeur_' . $i, $instructeur);
         }
 
-        $manager->flush();
+        // Génération de 10 apprentis
+        for ($i = 1; $i <= 10; $i++) {
+            $apprenti = new User();
+            $apprenti->setEmail($faker->unique()->email);
+            $apprenti->setPassword($this->passwordHasher->hashPassword($apprenti, 'password'));
+            $apprenti->setNom($faker->lastName);
+            $apprenti->setPrenom($faker->firstName);
+            $apprenti->setRoles(['ROLE_APPRENTI']);
 
-        $ateliers = $manager->getRepository(Atelier::class)->findAll();
-
-        foreach ($users as $user) {
-            $inscriptions = $faker->randomElements($ateliers, mt_rand(1, 3));
-            foreach ($inscriptions as $atelier) {
-                $user->getAteliers()->add($atelier);
-                $atelier->ajouterInscrit($user);
-            }
+            $manager->persist($apprenti);
+            $this->addReference('apprenti_' . $i, $apprenti);
         }
 
-        $manager->flush();
+        $manager->flush(); // Sauvegarde des utilisateurs en base
     }
 }

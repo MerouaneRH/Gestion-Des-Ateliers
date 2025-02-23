@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Entity\Atelier;
+use App\Entity\Atelier; 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -29,6 +29,11 @@ class AdminController extends AbstractController
     public function promoteInstructor(User $user, EntityManagerInterface $entityManager): RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        if (!$user) {
+            $this->addFlash('error', 'Utilisateur introuvable.');
+            return $this->redirectToRoute('admin_instructeurs');
+        }
 
         if ($user->isAdmin()) {
             $this->addFlash('warning', 'Cet utilisateur est déjà administrateur.');
@@ -70,10 +75,22 @@ class AdminController extends AbstractController
         return $this->redirectToRoute('admin_instructeurs');
     }
 
+
     #[Route('/retrograder/{id}', name: 'admin_downgrade')]
     public function downgradeAdmin(User $user, EntityManagerInterface $entityManager): RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+
+        if (!$user) {
+            $this->addFlash('error', 'Utilisateur introuvable.');
+            return $this->redirectToRoute('admin_instructeurs');
+        }
+
+        // Empêcher un administrateur de se rétrograder lui-même
+        if ($user === $this->getUser()) {
+            $this->addFlash('error', 'Vous ne pouvez pas vous rétrograder vous-même.');
+            return $this->redirectToRoute('admin_instructeurs');
+        }
 
         if (!$user->isAdmin()) {
             $this->addFlash('warning', 'Cet utilisateur n\'est pas administrateur.');
@@ -84,8 +101,7 @@ class AdminController extends AbstractController
             if (count($admins) <= 1) {
                 $this->addFlash('error', 'Impossible de retirer le rôle d\'administrateur car il doit y avoir au moins un administrateur.');
             } else {
-                $roles = $user->getRoles();
-                $roles = array_filter($roles, fn($role) => $role !== 'ROLE_ADMIN'); // Supprimer ROLE_ADMIN
+                $roles = array_filter($user->getRoles(), fn($role) => $role !== 'ROLE_ADMIN');
                 $user->setRoles($roles);
                 $entityManager->flush();
 
@@ -95,5 +111,4 @@ class AdminController extends AbstractController
 
         return $this->redirectToRoute('admin_instructeurs');
     }
-
 }
