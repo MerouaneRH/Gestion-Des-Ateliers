@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %} Noter l'atelier - {{ atelier.nom }} {% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4 text-center">
+            <i class="bi bi-star-fill"></i> Noter l'atelier : {{ atelier.nom }}
+        </h1>
+
+        <!-- Messages Flash -->
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-circle me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
+        <!-- Formulaire de notation -->
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Attribuer une note</h5>
+
+                {{ form_start(form) }}
+                {{ form_widget(form) }}
+
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <br>
+        <a href="{{ path('app_atelier_show', {'id': atelier.id}) }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-2"></i> Retour à l'atelier
+        </a>
+    </div>
+{% endblock %}

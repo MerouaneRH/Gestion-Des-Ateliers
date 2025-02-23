@@ -35,9 +35,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToMany(targetEntity: Atelier::class, mappedBy: 'inscrits')]
     private Collection $ateliers;
 
+    /**
+     * @var Collection<int, Note>
+     */
+    #[ORM\OneToMany(targetEntity: Note::class, mappedBy: 'apprenti')]
+    private Collection $notes;
+
     public function __construct()
     {
         $this->ateliers = new ArrayCollection();
+        $this->notes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -151,5 +158,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         if ($this->isAdmin()) {
             $this->roles = array_filter($this->roles, fn($role) => $role !== 'ROLE_ADMIN');
         }
+    }
+
+    /**
+     * @return Collection<int, Note>
+     */
+    public function getNotes(): Collection
+    {
+        return $this->notes;
+    }
+
+    public function addNote(Note $note): static
+    {
+        if (!$this->notes->contains($note)) {
+            $this->notes->add($note);
+            $note->setApprenti($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNote(Note $note): static
+    {
+        if ($this->notes->removeElement($note)) {
+            // set the owning side to null (unless already changed)
+            if ($note->getApprenti() === $this) {
+                $note->setApprenti(null);
+            }
+        }
+
+        return $this;
     }
 }
