@@ -27,34 +27,23 @@ final class AtelierController extends AbstractController
     #[Route('/mesinscriptions', name: 'mes_inscriptions', methods: ['GET'])]
     public function mesInscriptions(): Response
     {
-        // Vérifier que l'utilisateur est bien un apprenti
         $user = $this->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
+        if (!$user || !in_array('ROLE_APPRENTI', $user->getRoles())) {
+            $this->addFlash('error', 'Seuls les apprentis peuvent accéder à cette page.');
+            return $this->redirectToRoute('app_atelier_index');
         }
 
-        // Récupérer les ateliers où l'utilisateur est inscrit
-        $ateliers = $user->getAteliers();
-
-
         return $this->render('atelier/mes_inscriptions.html.twig', [
-            'ateliers' => $ateliers,
+            'ateliers' => $user->getAteliers(),
         ]);
     }
 
     #[Route('/new', name: 'app_atelier_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        if (!$this->getUser()) {
-            return $this->redirectToRoute('app_login');
-        }
-        if (!in_array('ROLE_INSTRUCTEUR', $this->getUser()->getRoles())) {
-            throw new AccessDeniedException('Vous devez être un instructeur pour créer un atelier.');
-        }
         $this->denyAccessUnlessGranted('ROLE_INSTRUCTEUR');
-        $users = $entityManager->getRepository(User::class)->findAll();
+
         $atelier = new Atelier();
-        //$atelier->setInstructeur($users[array_rand($users)]);
         $atelier->setInstructeur($this->getUser());
         $form = $this->createForm(AtelierType::class, $atelier);
         $form->handleRequest($request);
@@ -62,8 +51,7 @@ final class AtelierController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($atelier);
             $entityManager->flush();
-
-            return $this->redirectToRoute('app_atelier_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_atelier_index');
         }
 
         return $this->render('atelier/new.html.twig', [
@@ -73,15 +61,16 @@ final class AtelierController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_atelier_show', methods: ['GET'])]
-    public function show(Atelier $atelier): Response
+    public function show(Atelier $atelier = null): Response
     {
-        $parser = new \cebe\markdown\Markdown();
-        $description = $parser->parse($atelier->getDescription());
-        $description = str_replace("<p>","",$description);
-        $description = str_replace("</p>","",$description);
+        if (!$atelier) {
+            $this->addFlash('error', 'Cet atelier n\'existe pas.');
+            return $this->redirectToRoute('app_atelier_index');
+        }
+
         return $this->render('atelier/show.html.twig', [
             'atelier' => $atelier,
-            'description' => $description
+            'description' => (new \cebe\markdown\Markdown())->parse($atelier->getDescription()),
         ]);
     }
 
@@ -89,7 +78,7 @@ final class AtelierController extends AbstractController
     public function edit(Request $request, Atelier $atelier, EntityManagerInterface $entityManager): Response
     {
         if ($this->getUser() !== $atelier->getInstructeur()) {
-            $this->addFlash('error', 'Vous n\'avez pas le droit de modifier cet atelier.');
+            $this->addFlash('error', 'Vous ne pouvez modifier que vos propres ateliers.');
             return $this->redirectToRoute('app_atelier_index');
         }
 
@@ -98,8 +87,7 @@ final class AtelierController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
-
-            return $this->redirectToRoute('app_atelier_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_atelier_index');
         }
 
         return $this->render('atelier/edit.html.twig', [
@@ -112,22 +100,26 @@ final class AtelierController extends AbstractController
     public function delete(Request $request, Atelier $atelier, EntityManagerInterface $entityManager): Response
     {
         if ($this->getUser() !== $atelier->getInstructeur()) {
-            $this->addFlash('error', 'Vous n\'avez pas le droit de supprimer cet atelier.');
+            $this->addFlash('error', 'Vous ne pouvez supprimer que vos propres ateliers.');
             return $this->redirectToRoute('app_atelier_index');
         }
-        if ($this->isCsrfTokenValid('delete'.$atelier->getId(), $request->getPayload()->getString('_token'))) {
+
+        if ($this->isCsrfTokenValid('delete' . $atelier->getId(), $request->request->get('_token'))) {
             $entityManager->remove($atelier);
             $entityManager->flush();
+            $this->addFlash('success', 'Atelier supprimé avec succès.');
         }
 
-        return $this->redirectToRoute('app_atelier_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_atelier_index');
     }
+
     #[Route('/{id}/inscription', name: 'app_atelier_inscription', methods: ['POST'])]
     public function inscription(Atelier $atelier, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
+        if (!$user || !in_array('ROLE_APPRENTI', $user->getRoles())) {
+            $this->addFlash('error', 'Seuls les apprentis peuvent s\'inscrire aux ateliers.');
+            return $this->redirectToRoute('app_atelier_index');
         }
 
         if (!$atelier->getInscrits()->contains($user)) {
@@ -145,8 +137,9 @@ final class AtelierController extends AbstractController
     public function desinscription(Atelier $atelier, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
+        if (!$user || !in_array('ROLE_APPRENTI', $user->getRoles())) {
+            $this->addFlash('error', 'Seuls les apprentis peuvent se désinscrire des ateliers.');
+            return $this->redirectToRoute('app_atelier_index');
         }
 
         if ($atelier->getInscrits()->contains($user)) {
@@ -159,5 +152,4 @@ final class AtelierController extends AbstractController
 
         return $this->redirectToRoute('app_atelier_show', ['id' => $atelier->getId()]);
     }
-
 }

@@ -23,8 +23,8 @@
                     </li>
                 {% endif %}
 
-                {# Bouton "Mes inscriptions" pour les utilisateurs connectés #}
-                {% if app.user %}
+                {# Bouton "Mes inscriptions" (visible uniquement pour les apprentis) #}
+                {% if app.user and 'ROLE_APPRENTI' in app.user.roles %}
                     <li class="nav-item">
                         <a class="nav-link btn btn-outline-light me-2" href="{{ path('mes_inscriptions') }}">
                             <i class="bi bi-journal-check"></i> Mes inscriptions
@@ -32,21 +32,6 @@
                     </li>
                 {% endif %}
 
-                {# Section Administration (visible uniquement pour les administrateurs) #}
-                {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle btn btn-warning me-2" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-gear"></i> Administration
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="adminDropdown">
-                            <li>
-                                <a class="dropdown-item" href="{{ path('admin_instructeurs') }}">
-                                    <i class="bi bi-person-badge"></i> Gérer les instructeurs
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                {% endif %}
 
                 {# Section utilisateur connecté #}
                 {% if app.user %}

@@ -39,31 +39,29 @@
             </div>
         </div>
 
-        <!-- Ajout de la liste des apprentis inscrits -->
-        {% if app.user %}
-        <div class="card mt-3 shadow-sm">
-            <div class="card-body">
-                <h5 class="card-title">Apprentis inscrits</h5>
-                {% if atelier.inscrits is not empty %}
-                    <ul class="list-group list-group-flush">
-                        {% for apprenti in atelier.inscrits %}
-                            <li class="list-group-item">
-                                <i class="bi bi-person-circle me-2"></i> {{ apprenti.nom }} ({{ apprenti.email }})
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p class="text-muted">Aucun apprenti inscrit pour le moment.</p>
-                {% endif %}
+        <!-- Liste des apprentis inscrits (visible uniquement pour les instructeurs) -->
+        {% if app.user and 'ROLE_INSTRUCTEUR' in app.user.roles %}
+            <div class="card mt-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Apprentis inscrits</h5>
+                    {% if atelier.inscrits is not empty %}
+                        <ul class="list-group list-group-flush">
+                            {% for apprenti in atelier.inscrits %}
+                                <li class="list-group-item">
+                                    <i class="bi bi-person-circle me-2"></i> {{ apprenti.nom }} ({{ apprenti.email }})
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">Aucun apprenti inscrit pour le moment.</p>
+                    {% endif %}
+                </div>
             </div>
-        </div>
-
         {% endif %}
 
         <div class="mt-3">
-            <!-- Vérifier si l'utilisateur est connecté -->
-            {% if app.user %}
-                <!-- Vérifier si l'utilisateur est déjà inscrit -->
+            <!-- Vérifier si l'utilisateur est connecté et est un apprenti -->
+            {% if app.user and 'ROLE_APPRENTI' in app.user.roles %}
                 {% if app.user in atelier.inscrits %}
                     <form action="{{ path('app_atelier_desinscription', {'id': atelier.id}) }}" method="post">
                         <button type="submit" class="btn btn-danger">
@@ -77,9 +75,6 @@
                         </button>
                     </form>
                 {% endif %}
-            {% else %}
-                <p class="text-center text-muted">Vous devez être connecté pour vous inscrire à cet atelier.</p>
-                <a href="{{ path('app_login') }}" class="btn btn-primary">Se connecter</a>
             {% endif %}
         </div>
 
