@@ -23,7 +23,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255)]
     private ?string $prenom = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
@@ -91,7 +91,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getUserIdentifier(): string
     {
-        return (string)$this->email;
+        return (string) $this->email;
     }
 
     public function getRoles(): array
@@ -105,7 +105,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function setRoles(array $roles): self
     {
-        $this->roles = $roles;
+        $this->roles = array_unique($roles);
         return $this;
     }
 
@@ -122,5 +122,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getAteliers(): Collection
     {
         return $this->ateliers;
+    }
+
+    /**
+     * Vérifie si l'utilisateur est administrateur.
+     */
+    public function isAdmin(): bool
+    {
+        return in_array('ROLE_ADMIN', $this->roles);
+    }
+
+    /**
+     * Ajoute le rôle d'administrateur à l'utilisateur.
+     */
+    public function promoteToAdmin(): void
+    {
+        if (!$this->isAdmin()) {
+            $this->roles[] = 'ROLE_ADMIN';
+            $this->roles = array_unique($this->roles); // Évite les doublons
+        }
+    }
+
+    /**
+     * Retire le rôle d'administrateur à l'utilisateur.
+     */
+    public function demoteFromAdmin(): void
+    {
+        if ($this->isAdmin()) {
+            $this->roles = array_filter($this->roles, fn($role) => $role !== 'ROLE_ADMIN');
+        }
     }
 }

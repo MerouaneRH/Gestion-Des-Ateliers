@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\DataFixtures;
 
 use App\Entity\Atelier;
@@ -21,6 +20,16 @@ class UserFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        // Ajout de l'administrateur
+        $admin = new User();
+        $admin->setEmail('admin@example.com');
+        $admin->setPassword($this->passwordHasher->hashPassword($admin, 'admin123'));
+        $admin->setNom('Admin');
+        $admin->setPrenom('Super');
+        $admin->setRoles(['ROLE_ADMIN']);
+        $manager->persist($admin);
+
+        // Ajout de l'instructeur de test
         $user = new User();
         $user->setEmail('toto.titi@gmail.com');
         $user->setPassword($this->passwordHasher->hashPassword($user, 'tototiti'));
@@ -28,7 +37,9 @@ class UserFixtures extends Fixture
         $user->setPrenom('Titi');
         $user->setRoles(['ROLE_INSTRUCTEUR']);
         $manager->persist($user);
+
         $manager->flush();
+
         $faker = Factory::create('fr_FR');
         $users = [];
 

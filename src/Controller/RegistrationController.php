@@ -1,16 +1,15 @@
 <?php
 
-
 namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\RegistrationType;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Doctrine\ORM\EntityManagerInterface;
 
 class RegistrationController extends AbstractController
 {
@@ -19,22 +18,30 @@ class RegistrationController extends AbstractController
     {
         $user = new User();
         $form = $this->createForm(RegistrationType::class, $user);
-
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-// Hash le mot de passe
+            // Hachage du mot de passe
             $hashedPassword = $passwordHasher->hashPassword($user, $user->getPassword());
             $user->setPassword($hashedPassword);
-            $user->setRoles(['ROLE_INSTRUCTEUR']);
 
+            // Attribution du rôle par défaut
+            $roles = ['ROLE_INSTRUCTEUR'];
+
+            // Vérifier si l'administrateur veut promouvoir ce compte en ROLE_ADMIN
+            if ($request->request->get('is_admin')) {
+                $roles[] = 'ROLE_ADMIN';
+                $this->addFlash('success', 'Cet utilisateur a été promu en administrateur.');
+            }
+
+            $user->setRoles(array_unique($roles));
 
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Registration successful! You can now log in.');
+            $this->addFlash('success', 'Inscription réussie ! Vous pouvez maintenant vous connecter.');
 
-            return $this->redirectToRoute('registeration');
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/register.html.twig', [

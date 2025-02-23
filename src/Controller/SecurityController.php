@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,15 +13,25 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
+            if ($this->getUser()->isAdmin()) {
+                return $this->redirectToRoute('admin_instructeurs'); // Redirection pour les admins
+            }
             return $this->redirectToRoute('app_atelier_index');
         }
 
-        // get the login error if there is one
+        // Récupérer l'erreur de connexion s'il y en a une
         $error = $authenticationUtils->getLastAuthenticationError();
-        // last username entered by the user
+        if ($error) {
+            $this->addFlash('error', 'Identifiants incorrects. Veuillez réessayer.');
+        }
+
+        // Dernier nom d'utilisateur entré
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
+        return $this->render('security/login.html.twig', [
+            'last_username' => $lastUsername,
+            'error' => $error,
+        ]);
     }
 
     #[Route(path: '/logout', name: 'app_logout')]

@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des instructeurs{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">
+            <i class="bi bi-people"></i> Gestion des Instructeurs
+        </h1>
+
+        {# Messages Flash #}
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="bi bi-check-circle"></i> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="bi bi-exclamation-triangle"></i> {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+
+        {# Champ de recherche #}
+        <div class="mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Rechercher un instructeur..." onkeyup="filterTable()">
+        </div>
+
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-dark">
+            <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Rôles</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody id="tableBody">
+            {% for instructeur in instructeurs %}
+                <tr>
+                    <td>{{ instructeur.nom }}</td>
+                    <td>{{ instructeur.email }}</td>
+                    <td>{{ instructeur.roles|join(', ') }}</td>
+                    <td>
+                        {% if 'ROLE_ADMIN' in instructeur.roles %}
+                            <a href="{{ path('admin_downgrade', {'id': instructeur.id}) }}" class="btn btn-warning btn-sm"
+                               onclick="return confirm('Êtes-vous sûr de vouloir retirer le rôle d\'administrateur ?');">
+                                <i class="bi bi-arrow-down"></i> Rétrograder
+                            </a>
+                        {% else %}
+                            <a href="{{ path('admin_promote', {'id': instructeur.id}) }}" class="btn btn-success btn-sm">
+                                <i class="bi bi-arrow-up"></i> Promouvoir Admin
+                            </a>
+                        {% endif %}
+                        <a href="{{ path('admin_delete', {'id': instructeur.id}) }}"
+                           class="btn btn-danger btn-sm"
+                           onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet instructeur ?');">
+                            <i class="bi bi-trash"></i> Supprimer
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {# Script pour filtrer la table en fonction de la recherche #}
+    <script>
+        function filterTable() {
+            let input = document.getElementById("searchInput").value.toLowerCase();
+            let rows = document.querySelectorAll("#tableBody tr");
+
+            rows.forEach(row => {
+                let name = row.cells[0].textContent.toLowerCase();
+                let email = row.cells[1].textContent.toLowerCase();
+                if (name.includes(input) || email.includes(input)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+    </script>
+{% endblock %}
